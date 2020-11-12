@@ -56,9 +56,6 @@ func (this *Make) Handle(args []string, options map[string]string) {
 		outputFile = lib.ForceFilenameSuffix(outputFile, now + ".yml", "yml", "yaml")
 	}
 
-	fmt.Println(outputFile)
-	return
-
 	// 使用的模板
 	defaultTemplateName := ""
 	if group.Template != "" {

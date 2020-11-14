@@ -50,7 +50,6 @@ func (this *Make) Handle(args []string, options map[string]string) {
 	defaultOutputFile = lib.AutoFilenameSuffix(defaultOutputFile, "yml", "yml", "yaml")
 	outputFile := lib.GetOptionWithDefault(options, defaultOutputFile, true, "output", "out", "o")
 	outputFile = lib.AutoFilenameSuffix(outputFile, "yml", "yml", "yaml")
-	fmt.Println(group.IsAutoOverride())
 	// 自动覆盖时，
 	if group.IsAutoOverride() && lib.IsFile(outputFile) {
 		outputFile = lib.ForceFilenameSuffix(outputFile, now + ".yml", "yml", "yaml")
@@ -86,7 +85,7 @@ func (this *Make) Handle(args []string, options map[string]string) {
 	}
 	// 输出到文件
 	outputBytes := []byte(strings.Join(templateLines, "\n"))
-	err = ioutil.WriteFile(outputFile, outputBytes, 0644)
+	err = ioutil.WriteFile(outputFile, outputBytes, 0755)
 	lib.IfErrorExit(err != nil, "output to file ["+outputFile+"] failed: ", err)
 	lib.Success("make docker-compose file [" + outputFile + "] success")
 }

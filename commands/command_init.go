@@ -55,7 +55,7 @@ func (this *Init) Handle(args []string, options map[string]string) {
 		if lib.IsDir(dir[0]) {
 			lib.Info(dir[1], "dir [", dir[0], "] already exists.")
 		} else {
-			err := os.Mkdir(dir[0], 0644)
+			err := os.Mkdir(dir[0], 0755)
 			// 创建失败退出
 			lib.IfErrorExit(err != nil, "create ", dir[1], " dir [", dir[0], "] fail: ", err)
 			// 创建成功提示
@@ -86,7 +86,7 @@ func (this *Init) Handle(args []string, options map[string]string) {
 			continue
 		}
 		outputBytes := []byte(file.Content)
-		err := ioutil.WriteFile(file.File, outputBytes, 0644)
+		err := ioutil.WriteFile(file.File, outputBytes, 0755)
 		lib.IfErrorExit(err != nil, "init file ["+file.Title+"] failed: ", err)
 		lib.Info("init file [" + file.Title + "] success")
 	}

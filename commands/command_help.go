@@ -39,4 +39,11 @@ func (this *Help) Help() {
 	doc.Commands = append(doc.Commands, map[string]string{"make": "make docker-compose.yml file with your group configs"})
 	doc.Commands = append(doc.Commands, map[string]string{"init": "init your docker-compose project"})
 	doc.Print()
+
+	// 联系方式
+	contacts := make([]map[string]string, 0)
+	contacts = append(contacts, map[string]string{"Email: ": "daijulong@qq.com"})
+	contacts = append(contacts, map[string]string{"Wechat: ": "julongdai"})
+	contacts = append(contacts, map[string]string{"QQ: ": "88622090"})
+	doc.PrintLines(contacts, "Contact me")
 }

@@ -93,7 +93,7 @@ func (this *Make) Handle(args []string, options map[string]string) {
 func (this *Make) Help() {
 	doc := NewCommandHelpDocument()
 	doc.Description = "make docker-compose.yml file with your group settings. "
-	doc.Usage = "dockposer " + lib.TextYellow("make") + "[" + lib.TextYellow("group") + "] [" + lib.TextYellow("options") + "] "
+	doc.Usage = "dockposer " + lib.TextYellow("make") + " [" + lib.TextYellow("group") + "] [" + lib.TextYellow("options") + "] "
 	doc.Options = append(doc.Options, map[string]string{"-o, --out, --output": "output file name"})
 	doc.Options = append(doc.Options, map[string]string{"-t, --tpl, --template": "docker-compose.yml template"})
 	doc.Args = append(doc.Args, map[string]string{"group": "group name in the settings, default is \"default\", view in \"groups.yml\" file"})

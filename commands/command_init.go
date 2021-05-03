@@ -16,8 +16,8 @@ func NewInit() *Init {
 
 func (this *Init) Handle(args []string, options map[string]string) {
 	// 生成 .env, .env_example 文件
-	// 生成 docker-compose 目录和 services, templates 子目录
-	// 生成 docker-compose/groups.yml 文件
+	// 生成 compose 目录和 services, templates 子目录
+	// 生成 compose/groups.yml 文件
 	// 如果生成演示文件，则：
 	//    groups.yml 中多一组演示配置
 	//    services 目录下多 nginx
@@ -30,7 +30,7 @@ func (this *Init) Handle(args []string, options map[string]string) {
 	withDemo, _ := lib.GetOption(options, "with-demo")
 
 	// 需要创建的各目录
-	dockerComposeDir := lib.FilePath(initDir, "docker-compose")
+	dockerComposeDir := lib.FilePath(initDir, "compose")
 	dockerComposeServicesDir := lib.FilePath(dockerComposeDir, "services")
 	dockerComposeTemplatesDir := lib.FilePath(dockerComposeDir, "templates")
 	// 需要写入的各文件路径
@@ -47,7 +47,7 @@ func (this *Init) Handle(args []string, options map[string]string) {
 	dirs := make([][]string, 0)
 	dirs = append(dirs,
 		[]string{initDir, "project"},
-		[]string{dockerComposeDir, "docker-compose"},
+		[]string{dockerComposeDir, "compose"},
 		[]string{dockerComposeServicesDir, "services"},
 		[]string{dockerComposeTemplatesDir, "templates"},
 	)

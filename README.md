@@ -9,6 +9,8 @@
 /_________/\______/\______/__/  \_/________/\_____/__/
 ```
 
+[升级说明](upgrade.md)
+
 ## 更方便灵活地管理 docker-compose.yml
 
 你不必再从冗长的 `docker-compose.yml` 中苦苦追寻，`dockser` 已经为你将 `services` 拆散，让你可以灵活组装。
@@ -76,7 +78,7 @@ dockser init
 你将在当前目录中得到以下目录和文件：
 
 ```
-docker-compose/              存放 docker-compose 相关配置文件 
+compose/              存放 docker-compose 相关配置文件 
   |- services/               存放 service 文件，一般每个 service 一个文件
     |- nginx.yml             示例 service 文件
   |- templates/              存放 docker-compose.yml 模板
@@ -86,7 +88,7 @@ docker-compose/              存放 docker-compose 相关配置文件
 .env.example  环境变量示例
 ```
 
-如果加上 `--with-demo`，你将得到额外得到 `docker-compose/templates/docker-compose-demo.yml` 模板文件，并且 `docker-compose/groups.yml` 中也会多一个 `demo` 的分组配置。
+如果加上 `--with-demo`，你将得到额外得到 `compose/templates/docker-compose-demo.yml` 模板文件，并且 `compose/groups.yml` 中也会多一个 `demo` 的分组配置。
 
 ### 生成 docker-compose.yml 文件
 
@@ -101,6 +103,12 @@ dockser make
 ```
 dockser make demo
 ```
+
+### 其他命令
+
+当子命令不存在时，将会直接调用系统的 `docker-compose` 来执行子命令，如 `dockser ps -a`，因为 `ps` 不是 `dockser` 的子命令，所以会直接执行 `docker-compose ps -a` 命令。
+
+> 目前仅支持同步输出的命令，交互式命令（如 `dockser exec xxx sh`）暂不支持。
 
 ## 配置详解
 
@@ -118,7 +126,7 @@ service 等同于常规 docker-compose.yml 中 services 下的配置，在生成
 
 ### 分组配置
 
-分组配置文件 docker-compose/groups.yml 是本工具的核心配置，以下示例内容定义了非常常见的 php 开发环境：
+分组配置文件 compose/groups.yml 是本工具的核心配置，以下示例内容定义了非常常见的 php 开发环境：
 
 ```
 lnmp:
@@ -133,7 +141,7 @@ lnmp:
 ```
 
 - 分组名：lnmp
-- services: 组合 4 个 service，对应 docker-compose/services 下应该有 nginx.yml,php.yml,mysql.yml,redis.yml 这 4 个文件。
+- services: 组合 4 个 service，对应 compose/services 下应该有 nginx.yml,php.yml,mysql.yml,redis.yml 这 4 个文件。
 - template: 使用的模板文件是 docker-compose/templates/docker-compose-lnmp.yml
 - output：生成文件名，将在当前目录下生成 docker-compose.yml 文件
 - override：输出文件覆盖机制。设置为 auto 时，如果不存在 output 文件，直接生成，如果存在，会在文件名后面增加一个日期时间，不会覆盖原有文件内容。设置为 force 时，将会强行覆盖已存在的文件内容。默认为 auto。

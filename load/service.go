@@ -11,7 +11,7 @@ func Services(services []string) (string, error) {
 	}
 	servicesContentBlocks := make([]string, 0)
 	for _, service := range services {
-		file := "./docker-compose/services/" + service + ".yml"
+		file := "./compose/services/" + service + ".yml"
 		fileLines, err := lib.ReadFileLines(file, service)
 		if err != nil {
 			return "", err

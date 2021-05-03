@@ -1,9 +1,11 @@
 package commands
 
 import (
-	"github.com/daijulong/dockser/lib"
+	"bytes"
 	"fmt"
+	"github.com/daijulong/dockser/lib"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -145,10 +147,24 @@ func Run() {
 		params = params[1:]
 	}
 	commandHandler := CommandsMapping.Get(command)
-	helpOption, _ := lib.GetOption(options, "help", "h")
-	if helpOption == true {
-		commandHandler.Help()
+	// 如果子命令不存在，则转发执行 docker-compsoe 命令
+	// 目前只实现了同步执行的命令，交互式命令（如 docker-compose exec xxx sh）暂未实现
+	if commandHandler == nil {
+		warnTip := "*  no dockser sub command, will be exec: docker-compose " + strings.Join(args[1:], " ") + "  *"
+		lib.Warn(strings.Repeat("*", len(warnTip)))
+		lib.Warn(warnTip)
+		lib.Warn(strings.Repeat("*", len(warnTip)))
+		var stdout bytes.Buffer
+		cmd := exec.Command("docker-compose", args[1:]...)
+		cmd.Stdout = &stdout
+		_ = cmd.Run()
+		lib.Info(cmd.Stdout)
 	} else {
-		commandHandler.Handle(params, options)
+		helpOption, _ := lib.GetOption(options, "help", "h")
+		if helpOption == true {
+			commandHandler.Help()
+		} else {
+			commandHandler.Handle(params, options)
+		}
 	}
 }

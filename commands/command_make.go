@@ -1,9 +1,10 @@
 package commands
 
 import (
+	"fmt"
+	"github.com/daijulong/dockser/core"
 	"github.com/daijulong/dockser/lib"
 	"github.com/daijulong/dockser/load"
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"strings"
@@ -17,16 +18,22 @@ func NewMake() *Make {
 }
 
 func (this *Make) Handle(args []string, options map[string]string) {
+	// 默认分组，优先从 .env 文件中读取 DEFAULT_GROUP
+	defaultGroup := "default"
+	if _, ok := core.Envs["DEFAULT_GROUP"]; ok {
+		defaultGroup = core.Envs["DEFAULT_GROUP"]
+	}
+
 	// 指定的 services 分组
-	servicesGroupName := "default"
+	servicesGroupName := defaultGroup
 	if len(args) < 1 {
-		lib.Info("parameter [" + lib.TextYellow("group") + "] not found, " + lib.TextYellow("default") + " will be taken")
+		lib.Info("parameter [" + lib.TextYellow("group") + "] not found, the default group [" + lib.TextYellow(defaultGroup) + "] will be taken")
 	} else {
 		servicesGroupName = args[0]
 	}
 
 	// 组配置
-	groupFile := "./docker-compose/groups.yml"
+	groupFile := "./compose/groups.yml"
 	lib.IfErrorExit(!lib.FileExist(groupFile), "services group file ["+groupFile+"] does not exist")
 
 	groups := newGroups()
@@ -65,7 +72,7 @@ func (this *Make) Handle(args []string, options map[string]string) {
 	}
 	templateFileName := lib.GetOptionWithDefault(options, defaultTemplateName, true, "template", "tpl", "t")
 	templateFileName = lib.AutoFilenameSuffix(templateFileName, "yml", "yml", "yaml")
-	templateFile := "./docker-compose/templates/" + templateFileName
+	templateFile := "./compose/templates/" + templateFileName
 
 	lib.IfErrorExit(!lib.FileExist(templateFile), "template file ["+templateFile+"] does not exist")
 

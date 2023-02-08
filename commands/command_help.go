@@ -6,13 +6,16 @@ import (
 	"github.com/gookit/color"
 )
 
+// Help 子命令 struct
 type Help struct{}
 
+// NewHelp Help 子命令 constructor
 func NewHelp() *Help {
 	return &Help{}
 }
 
-func (this *Help) Handle(args []string, options map[string]string) {
+// Handle 执行命令
+func (h *Help) Handle(args []string, options map[string]string) {
 	versionOption, _ := lib.GetOption(options, "version", "v")
 	if versionOption == true {
 		doc := NewCommandHelpDocument()
@@ -20,11 +23,12 @@ func (this *Help) Handle(args []string, options map[string]string) {
 		doc.Options = make([]map[string]string, 0)
 		doc.Print()
 	} else {
-		this.Help()
+		h.Help()
 	}
 }
 
-func (this *Help) Help() {
+// Help 显示帮助信息
+func (h *Help) Help() {
 	doc := NewCommandHelpDocument()
 	doc.Description = `     ________                  ___
     /  ___   \                /  / ___ 

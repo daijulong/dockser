@@ -4,17 +4,19 @@ import (
 	"github.com/daijulong/dockser/core"
 	"github.com/daijulong/dockser/lib"
 	"github.com/daijulong/dockser/resource"
-	"io/ioutil"
 	"os"
 )
 
+// Init 子命令 struct
 type Init struct{}
 
+// NewInit Init 子命令 constructor
 func NewInit() *Init {
 	return &Init{}
 }
 
-func (this *Init) Handle(args []string, options map[string]string) {
+// Handle 执行命令
+func (i *Init) Handle(args []string, options map[string]string) {
 	// 生成 .env, .env_example 文件
 	// 生成 compose 目录和 services, templates 子目录
 	// 生成 compose/groups.yml 文件
@@ -59,7 +61,7 @@ func (this *Init) Handle(args []string, options map[string]string) {
 			// 创建失败退出
 			lib.IfErrorExit(err != nil, "create ", dir[1], " dir [", dir[0], "] fail: ", err)
 			// 创建成功提示
-			lib.Info("create", dir[1], "dir ["+ dir[0]+ "] success.")
+			lib.Info("create", dir[1], "dir ["+dir[0]+"] success.")
 		}
 	}
 
@@ -71,14 +73,14 @@ func (this *Init) Handle(args []string, options map[string]string) {
 		envFileContent = resource.InitFileEnvDemoContent
 		groupFileCotent = resource.InitFileGroupDemoContent
 	}
-	InitFiles.Add(newInitFile(".env", envFile, envFileContent))
-	InitFiles.Add(newInitFile(".env.example", envExampleFile, resource.InitFileEvnExampleContent))
-	InitFiles.Add(newInitFile("groups.yml", groupFile, groupFileCotent))
-	InitFiles.Add(newInitFile("template", defaultTemplateFile, resource.InitFileTemplateContent))
+	InitFiles.add(newInitFile(".env", envFile, envFileContent))
+	InitFiles.add(newInitFile(".env.example", envExampleFile, resource.InitFileEvnExampleContent))
+	InitFiles.add(newInitFile("groups.yml", groupFile, groupFileCotent))
+	InitFiles.add(newInitFile("template", defaultTemplateFile, resource.InitFileTemplateContent))
 	if withDemo {
-		InitFiles.Add(newInitFile("demo template", demoTemplateFile, resource.InitFileTemplateDemoContent))
+		InitFiles.add(newInitFile("demo template", demoTemplateFile, resource.InitFileTemplateDemoContent))
 	}
-	InitFiles.Add(newInitFile("service:nginx", serviceNginxFile, resource.InitFileServiceNginxContent))
+	InitFiles.add(newInitFile("service:nginx", serviceNginxFile, resource.InitFileServiceNginxContent))
 	// 检查文件是否存在，如果存在则不写入
 	for _, file := range InitFiles.Files {
 		if lib.FileExist(file.File) {
@@ -86,40 +88,46 @@ func (this *Init) Handle(args []string, options map[string]string) {
 			continue
 		}
 		outputBytes := []byte(file.Content)
-		err := ioutil.WriteFile(file.File, outputBytes, 0755)
+		err := os.WriteFile(file.File, outputBytes, 0755)
 		lib.IfErrorExit(err != nil, "init file ["+file.Title+"] failed: ", err)
 		lib.Info("init file [" + file.Title + "] success")
 	}
 	lib.Success("init success. please open the directory [", initDir, "] to view.")
 }
 
-func (this *Init) Help() {
+// Help 显示帮助信息
+func (i *Init) Help() {
 	doc := NewCommandHelpDocument()
 	doc.Description = "init your docker-compose project."
-	doc.Usage = "dockposer " + lib.TextYellow("init") + " [" + lib.TextYellow("options") + "] "
+	doc.Usage = "dockser " + lib.TextYellow("init") + " [" + lib.TextYellow("options") + "] "
 	doc.Options = append(doc.Options, map[string]string{"-d, --dir": "your project directory, default is the current directory"})
 	doc.Options = append(doc.Options, map[string]string{"--with-demo": "init with demo data"})
 	doc.Print()
 }
 
+// 初始化文件 struct
 type initFile struct {
 	Title   string
 	File    string
 	Content string
 }
 
+// initFile constructor
 func newInitFile(title string, file string, content string) *initFile {
 	return &initFile{Title: title, File: file, Content: content}
 }
 
+// 初始化文件集 struct
 type initFiles struct {
 	Files []*initFile
 }
 
+// initFiles constructor
 func newInitFiles() *initFiles {
 	return &initFiles{Files: make([]*initFile, 0)}
 }
 
-func (this *initFiles) Add(file *initFile) {
-	this.Files = append(this.Files, file)
+// add 向文件集中添加一个文件
+func (f *initFiles) add(file *initFile) {
+	f.Files = append(f.Files, file)
 }

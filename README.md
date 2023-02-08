@@ -158,18 +158,14 @@ dockser make lnmp -tpl=docker-compose.yml -out=docker-compose-php.yml
 
 ```
 version: "3"
-services:
-  @@_SERVICES_@@
 networks:
   #@_NETWORK_@#:
       driver: bridge
 ```
 
-在使用 make 命令生成文件时，会将 `@@_SERVICES_@@` 替换为分组配置中的各个服务的内容。
-
-> `@@_SERVICES_@@` 要单独占一行。
-
 `#@_NETWORK_@#` 在生成文件时，会被替换为 .env 文件中定义的环境变量“NETWORK”。如果要使用环境变量，只需要在 .env 文件中定义，并在文件中以 `#@_` + `环境变量名` + `_@#` 的格式占位即可。在模板文件和服务文件中都可使用。这也就解决了 yaml 文件中 key 不能使用变量来灵活设置的问题。
+
+模板中也可以声明有效的 service，且会与 `group` 中声明的 service 内容合并，但一般不建议这样做。
 
 ## 其他
 

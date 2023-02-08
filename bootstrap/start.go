@@ -8,11 +8,12 @@ import (
 	"log"
 )
 
-func Start()  {
+// Start 启动
+func Start() {
 	commands.Run()
 }
 
-//加载 .env 文件
+// LoadEnv 加载 .env 文件
 func LoadEnv() {
 	core.Envs = make(map[string]string)
 	if lib.IsFile(".env") {

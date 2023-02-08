@@ -10,32 +10,38 @@ import (
 	"strings"
 )
 
+// CommandInterface 命令接口
 type CommandInterface interface {
-	//执行命令
+	// Handle 执行命令
 	Handle(args []string, options map[string]string)
+	// Help 显示帮助信息
 	Help()
 }
 
+// Commands 命令集 struct
 type Commands struct {
 	commands map[string]CommandInterface
 }
 
+// NewCommands Commands constructor
 func NewCommands() *Commands {
 	return &Commands{commands: make(map[string]CommandInterface)}
 }
 
-func (this *Commands) Get(command string) CommandInterface {
-	if _, ok := this.commands[command]; ok {
-		return this.commands[command]
+// Get 获取一个命令
+func (c *Commands) Get(command string) CommandInterface {
+	if _, ok := c.commands[command]; ok {
+		return c.commands[command]
 	}
 	return nil
 }
 
-func (this *Commands) Register(name string, command CommandInterface) {
-	this.commands[name] = command
+// Register 注册一个命令
+func (c *Commands) Register(name string, command CommandInterface) {
+	c.commands[name] = command
 }
 
-//命令行帮助文档
+// CommandHelpDocument 命令行帮助文档
 type CommandHelpDocument struct {
 	Description string
 	Usage       string
@@ -45,6 +51,7 @@ type CommandHelpDocument struct {
 	PrintMaxLen int
 }
 
+// NewCommandHelpDocument 命令行帮助文档 constructor
 func NewCommandHelpDocument() *CommandHelpDocument {
 	defaultOptions := make([]map[string]string, 0)
 	defaultOptionHelp := make(map[string]string)
@@ -60,48 +67,51 @@ func NewCommandHelpDocument() *CommandHelpDocument {
 	}
 }
 
-func (this *CommandHelpDocument) Print() {
-	if this.Description != "" {
-		fmt.Println(this.Description)
+// Print 打印帮助文档，并自动对齐
+func (h *CommandHelpDocument) Print() {
+	if h.Description != "" {
+		fmt.Println(h.Description)
 	}
-	if this.Usage != "" {
+	if h.Usage != "" {
 		fmt.Println()
-		fmt.Println(lib.TextGreen("Usage: "), "\n", "\n     "+this.Usage)
+		fmt.Println(lib.TextGreen("Usage: "), "\n", "\n     "+h.Usage)
 	}
 	// 计算左侧最大长度
-	maxLen := this.printMaxLen(this.Args)
-	if maxLen > this.PrintMaxLen {
-		this.PrintMaxLen = maxLen
+	maxLen := h.printMaxLen(h.Args)
+	if maxLen > h.PrintMaxLen {
+		h.PrintMaxLen = maxLen
 	}
-	maxLen = this.printMaxLen(this.Options)
-	if maxLen > this.PrintMaxLen {
-		this.PrintMaxLen = maxLen
+	maxLen = h.printMaxLen(h.Options)
+	if maxLen > h.PrintMaxLen {
+		h.PrintMaxLen = maxLen
 	}
-	maxLen = this.printMaxLen(this.Commands)
-	if maxLen > this.PrintMaxLen {
-		this.PrintMaxLen = maxLen
+	maxLen = h.printMaxLen(h.Commands)
+	if maxLen > h.PrintMaxLen {
+		h.PrintMaxLen = maxLen
 	}
 
-	this.PrintLines(this.Args, "Args")
-	this.PrintLines(this.Options, "Options")
-	this.PrintLines(this.Commands, "Commands")
+	h.PrintLines(h.Args, "Args")
+	h.PrintLines(h.Options, "Options")
+	h.PrintLines(h.Commands, "Commands")
 }
 
-func (this *CommandHelpDocument) PrintLines(lines []map[string]string, title string) {
+// PrintLines 按行打印
+func (h *CommandHelpDocument) PrintLines(lines []map[string]string, title string) {
 	if len(lines) > 0 {
 		fmt.Println()
 		fmt.Println(lib.TextGreen(title, ": "), "\n")
 		for _, items := range lines {
 			if len(items) > 0 {
 				for name, desc := range items {
-					fmt.Printf("    %-"+strconv.Itoa(this.PrintMaxLen+4)+"s %s\n", name, desc)
+					fmt.Printf("    %-"+strconv.Itoa(h.PrintMaxLen+4)+"s %s\n", name, desc)
 				}
 			}
 		}
 	}
 }
 
-func (this *CommandHelpDocument) printMaxLen(lines []map[string]string) int {
+// printMaxLen 计算一组字符串中最大长度
+func (h *CommandHelpDocument) printMaxLen(lines []map[string]string) int {
 	maxLen := 0
 	if len(lines) > 0 {
 		for _, items := range lines {
@@ -118,7 +128,7 @@ func (this *CommandHelpDocument) printMaxLen(lines []map[string]string) int {
 	return maxLen
 }
 
-// 运行子命令
+// Run 运行子命令
 func Run() {
 	args := os.Args
 	command := "help"

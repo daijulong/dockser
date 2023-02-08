@@ -37,8 +37,6 @@ demo:
   override: "auto"`
 
 var InitFileTemplateContent = `version: "3"
-services:
-  @@_SERVICES_@@
 networks:
   #@_NETWORK_@#:
       driver: bridge`

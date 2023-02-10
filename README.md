@@ -114,11 +114,42 @@ dockser make demo
 
 ### service
 
-service 等同于常规 docker-compose.yml 中 services 下的配置，在生成 docker-compose.yml 文件时，会在每一行前加**两个空格**（用作缩进）将替换到模板的指定位置。
+service 等同于常规 docker-compose.yml 中 services 下的配置。
 
 你可以考虑将你平时在 docker-compose.yml 中的每个 service 都拆分成独立的文件并放到此处，不再需要到冗长的文件中查找或修改，管理起来会十分方便。
 
 对于一些黄金组合，例如 `ELK`，也可以放到同一个 yml 中。总之，service 可以任意拆分组合到各文件中。
+
+### 附加指令
+
+各服务之间可能会有耦合，例如使用 nginx 时，其他服务可能需要由其进行反代，例如 blog 服务如果被使用，则应向 nginx 中新增一个类似于 blog.xxx.com.conf 的配置文件。为了解决这个问题，在 2.0 版本开始，使用附加指令进行处理。
+
+附加指令依托于 service 的定义文件，需要定义一个 dockser 的数据，以下为 blog/blog.yml 文件的内容：
+
+```
+blog:
+  ...... //此处省略具体内容
+dockser:
+  add:
+    copy:
+      - ./components/blog/nginx.conf:./components/nginx/etc/nginx/templates/blog.xxx.com.conf.template:override
+    #remove:
+    #  - ./components/nginx/etc/nginx/templates/blog.xxx.com.conf.template
+  remove:
+    remove:
+      - ./components/nginx/etc/nginx/templates/blog.xxx.com.conf.template
+```
+
+在此 service 文件中，除了声明了 blog 这个实际 service 内容外，还有一个 dockser 的声明，专门用于声明要执行的附加指令，dockser 作为保留名称，且不会作为 service 被编译到 docker-compose.yml 文件中。
+
+工具预设了 add 和 remove 两个时机，分别对应服务被添加和移除时需要执行的指令，目前仅实现了 add ，remove 将在后续版本中实现。
+
+当前支持的附加指令有：
+- copy：复制文件，每个文件声明包括 3 段，由”:“分隔，格式为：”源文件名:目标文件名:是否覆盖“
+  - 源文件名：复制哪个文件
+  - 目标文件名：复制到哪里，具体的文件名
+  - 是否覆盖：可以省略，默认为不覆盖，如果每次 make 时都需要覆盖一次文件，则需要指定为固定值”override“
+- remove：删除文件
 
 ### 模板
 

@@ -2,13 +2,10 @@ package load
 
 import (
 	"errors"
-	"fmt"
 	"github.com/daijulong/dockser/lib"
 	"gopkg.in/yaml.v2"
+	"reflect"
 )
-
-// ServicesContent 服务配置内容（多个）
-type ServicesContent map[string]*map[string]interface{}
 
 //------------------------------------------------
 //  Service
@@ -16,10 +13,10 @@ type ServicesContent map[string]*map[string]interface{}
 
 // Service 服务
 type Service struct {
-	Name     string                   //服务名称，对应文件名
-	Services map[string]interface{}   //服务，一个文件可能有多个服务
-	Add      []*AdditionalInstruction //添加服务时执行的附加指令集
-	Remove   []*AdditionalInstruction //移除服务时执行的附加指令集
+	Name     string                           //服务名称，对应文件名
+	Services map[string]interface{}           //服务，一个文件可能有多个服务
+	Add      []AdditionalInstructionInterface //添加服务时执行的附加指令集
+	Remove   []AdditionalInstructionInterface //移除服务时执行的附加指令集
 }
 
 // NewService Service constructor
@@ -42,14 +39,32 @@ func (s *Service) Load(service string) error {
 
 	s.Name = service
 	s.Services = make(map[string]interface{})
+	defer func() {
+		if err := recover(); err != nil {
+			lib.ErrorExit("load service["+service+"] fail:", err)
+		}
+	}()
 	for k, v := range serviceMap {
 		// dockser 为指定附加命令的指令，要排除
 		if k != "dockser" {
 			s.Services[k] = v
 		} else {
 			//处理附加命令
-			//@todo
-			fmt.Println("deal service[" + service + "] 处理附加指定")
+			for t, cmds := range v.(map[interface{}]interface{}) {
+				if reflect.TypeOf(t).String() != "string" {
+					continue
+				}
+				if t == "add" {
+					for cmd, args := range cmds.(map[interface{}]interface{}) {
+						instructions := NewInstructions()
+						cmdObjs, err := instructions.Load(cmd.(string), args)
+						if err != nil {
+							return err
+						}
+						s.Add = append(s.Add, cmdObjs...)
+					}
+				}
+			}
 		}
 	}
 	return nil
@@ -57,7 +72,9 @@ func (s *Service) Load(service string) error {
 
 // ApplyAddCommands 添加服务时执行附加指令集
 func (s *Service) ApplyAddCommands() error {
-
+	for _, ins := range s.Add {
+		ins.Apply()
+	}
 	return nil
 }
 
@@ -73,7 +90,6 @@ func (s *Service) ApplyRemoveCommands() error {
 
 // Services 服务
 type Services struct {
-	Contents *ServicesContent
 	Services []*Service
 }
 

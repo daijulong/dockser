@@ -80,7 +80,8 @@ func (m *Make) Handle(args []string, options map[string]string) {
 
 	// 读取 services
 	services := load.NewServices()
-	lib.IfErrorExit(services.Load(group.Services) != nil, "load services fail: ", err)
+	err = services.Load(group.Services)
+	lib.IfErrorExit(err != nil, "load services fail: ", err)
 
 	// 读取模板内容
 	templateContent, err := lib.ReadFile(templateFile, templateFileName)

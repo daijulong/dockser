@@ -2,7 +2,7 @@ package load
 
 import (
 	"errors"
-	"github.com/daijulong/dockser/lib"
+	"github.com/daijulong/dockser/v2/lib"
 	"gopkg.in/yaml.v2"
 	"reflect"
 )

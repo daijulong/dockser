@@ -2,7 +2,7 @@ package lib
 
 import (
 	"fmt"
-	"github.com/daijulong/dockser/core"
+	"github.com/daijulong/dockser/v2/core"
 	"github.com/gookit/color"
 	"os"
 	"strings"

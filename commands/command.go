@@ -3,7 +3,7 @@ package commands
 import (
 	"bytes"
 	"fmt"
-	"github.com/daijulong/dockser/lib"
+	"github.com/daijulong/dockser/v2/lib"
 	"os"
 	"os/exec"
 	"strconv"

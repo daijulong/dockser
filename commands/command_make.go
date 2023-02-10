@@ -2,9 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"github.com/daijulong/dockser/core"
-	"github.com/daijulong/dockser/lib"
-	"github.com/daijulong/dockser/load"
+	"github.com/daijulong/dockser/v2/core"
+	"github.com/daijulong/dockser/v2/lib"
+	"github.com/daijulong/dockser/v2/load"
 	"gopkg.in/yaml.v2"
 	"os"
 	"time"

@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/daijulong/dockser/core"
-	"github.com/daijulong/dockser/lib"
+	"github.com/daijulong/dockser/v2/core"
+	"github.com/daijulong/dockser/v2/lib"
 	"github.com/gookit/color"
 )
 

@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"github.com/daijulong/dockser/commands"
-	"github.com/daijulong/dockser/core"
-	"github.com/daijulong/dockser/lib"
+	"github.com/daijulong/dockser/v2/commands"
+	"github.com/daijulong/dockser/v2/core"
+	"github.com/daijulong/dockser/v2/lib"
 	"github.com/joho/godotenv"
 	"log"
 )

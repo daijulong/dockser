@@ -1,4 +1,4 @@
-module github.com/daijulong/dockser
+module github.com/daijulong/dockser/v2
 
 go 1.16
 
